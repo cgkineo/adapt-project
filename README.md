@@ -1,6 +1,6 @@
 # adapt-project
 
-Node.js library for managing Adapt Learning Framework projects — plugins, schemas, course data, and translations. 
+Node.js library for managing Adapt Learning Framework projects — plugins, schemas, course data, and translations.
 
 ## Installation
 
