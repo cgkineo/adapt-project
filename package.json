@@ -1,6 +1,6 @@
 {
   "name": "adapt-project",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Adapt Framework project helpers - plugins, schemas, data and translations",
   "main": "index.js",
   "type": "module",
