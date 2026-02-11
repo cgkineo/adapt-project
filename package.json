@@ -1,5 +1,9 @@
 {
   "name": "adapt-project",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cgkineo/adapt-project"
+  },
   "version": "1.0.5",
   "description": "Adapt Framework project helpers - plugins, schemas, data and translations",
   "main": "index.js",
