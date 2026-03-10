@@ -20,7 +20,7 @@ npm install adapt-project
 ## Quick Start
 
 ```js
-const { Framework } = require('adapt-project');
+import { Framework } from 'adapt-project';
 
 const framework = new Framework({
   rootPath: '/path/to/adapt-project'
@@ -55,29 +55,39 @@ Main entry point representing an Adapt Framework root directory.
 
 ```js
 const framework = new Framework({
-  rootPath: process.cwd(),   // Project root
-  outputPath: './build/',    // Build output directory
-  sourcePath: './src/',      // Source code directory
-  courseDir: 'course',       // Course data subdirectory name
-  jsonext: 'json',           // JSON file extension (json or txt)
-  trackingIdType: 'block',   // Content type to assign tracking IDs to
-  useOutputData: false,      // Read from build output instead of source
-  includedFilter: () => true,// Plugin filter function
+  rootPath: process.cwd(),       // Project root
+  outputPath: './build/',        // Build output directory
+  sourcePath: './src/',          // Source code directory
+  courseDir: 'course',           // Course data subdirectory name
+  jsonext: 'json',              // JSON file extension (json or txt)
+  trackingIdType: 'block',      // Content type to assign tracking IDs to
+  useOutputData: false,         // Read from build output instead of source
+  usePackageJSON: false,        // Use package.json for plugin metadata
+  schemaVersion: '0.1.0',       // Schema version for compatibility checks
+  schemasConfig: {},             // Additional schemas configuration
+  specifiedMenus: null,         // Array of menu plugin names to include, or null for all
+  specifiedThemes: null,        // Array of theme plugin names to include, or null for all
+  includedFilter: null,         // Plugin filter function (auto-generated from config if null)
   log: console.log,
   warn: console.warn
 }).load();
 ```
 
-| Method | Returns | Description |
+| Method / Property | Returns | Description |
 |---|---|---|
 | `load()` | `Framework` | Load the project's `package.json` |
-| `getData()` | `Data` | Get course data instance |
-| `getPlugins()` | `Plugins` | Discover and load all plugins |
-| `getSchemas()` | `Schemas` | Load all plugin schemas |
-| `getTranslate(options)` | `Translate` | Get translation import/export instance |
+| `getData(options?)` | `Data` | Get course data instance. Options: `{ useOutputData, performLoad }` |
+| `getPlugins(options?)` | `Plugins` | Discover and load all plugins. Options: `{ includedFilter }` |
+| `getSchemas(options?)` | `Schemas` | Load all plugin schemas. Options: `{ includedFilter, schemasConfig }` |
+| `getTranslate(options?)` | `Translate` | Get translation import/export instance |
+| `getPackageJSONFileItem()` | `JSONFileItem` | Get the project's `package.json` as a file item |
+| `version` | `string` | The framework version from `package.json` |
+| `pluginTypesPlural` | `string[]` | Plugin type folder names (e.g. `['components', 'extensions', 'menu', 'theme']`) |
+| `pluginTypesSingular` | `string[]` | Singular plugin type names (e.g. `['component', 'extension', 'menu', 'theme']`) |
 | `makeIncludeFilter()` | `function` | Build a plugin filter from `config.json` build includes/excludes |
 | `applyGlobalsDefaults()` | `Framework` | Apply schema defaults to `_globals` in course data |
 | `applyScreenSizeDefaults()` | `Framework` | Apply schema defaults to `screenSize` in config |
+| `isSchemaVersionGte(version)` | `boolean` | Check if `schemaVersion` is greater than or equal to the given version |
 
 ### `Data`
 
@@ -102,13 +112,20 @@ Export and import translatable strings identified by schema annotations.
 const translate = framework.getTranslate({
   masterLang: 'en',
   targetLang: 'fr',
-  format: 'csv',         // 'csv', 'json', or 'xlf'
+  format: 'csv',              // 'csv', 'json', or 'xlf'
   csvDelimiter: ',',
-  shouldReplaceExisting: false
+  shouldReplaceExisting: false,
+  languagePath: '',            // Custom path to language files
+  isTest: false                // Test mode flag
 });
 
-await translate.export();  // Export master language strings
-await translate.import();  // Import translated strings into target language
+// Export master language strings
+await translate.export({
+  includeFieldContext: false   // Include field title and description in output (schema v1.0.0+)
+});
+
+// Import translated strings into target language
+await translate.import();
 ```
 
 Supported formats:
