@@ -24,7 +24,8 @@
     "iconv-lite": "^0.6.3",
     "jschardet": "^1.6.0",
     "lodash": "^4.17.23",
-    "semver": "^7.6.0"
+    "semver": "^7.6.0",
+    "adapt-schemas": "^1.1.0"
   },
   "devDependencies": {
     "@semantic-release/git": "^10.0.1",
