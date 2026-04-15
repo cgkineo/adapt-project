@@ -25,7 +25,7 @@
     "jschardet": "^1.6.0",
     "lodash": "^4.17.23",
     "semver": "^7.6.0",
-    "adapt-schemas": "^2.0.0"
+    "adapt-schemas": "^3.1.0"
   },
   "devDependencies": {
     "@semantic-release/git": "^10.0.1",
