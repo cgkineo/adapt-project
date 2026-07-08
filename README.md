@@ -4,9 +4,17 @@ Node.js library for managing Adapt Learning Framework projects — plugins, sche
 
 ## Installation
 
+The features described below (schema version 1.0.0 / AJV validation, menu and theme
+plugin types, `specifiedMenus`/`specifiedThemes`, etc.) are only available on the
+`features/v2` branch, which has not yet been released to npm. Install it directly
+from GitHub:
+
 ```bash
-npm install adapt-project
+npm install github:cgkineo/adapt-project#features/v2
 ```
+
+The published `npm install adapt-project` package (currently `1.0.6`) reflects the
+older `master` branch and lacks these features.
 
 ## Overview
 
