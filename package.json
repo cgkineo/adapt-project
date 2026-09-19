@@ -12,7 +12,8 @@
   "license": "GPL-3.0",
   "scripts": {
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "test": "node --test"
   },
   "dependencies": {
     "async": "^3.2.2",
