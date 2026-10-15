@@ -16,10 +16,44 @@ function writePackageJSON (dir, data) {
   fs.writeJSONSync(path.join(dir, 'package.json'), data)
 }
 
-function loadPlugins (rootPath) {
-  const framework = new Framework({ rootPath, schemaVersion: '1.0.0', log: noop, warn: noop })
+function loadPlugins (rootPath, warn = noop) {
+  const framework = new Framework({ rootPath, schemaVersion: '1.0.0', log: noop, warn })
   return framework.getPlugins({ includedFilter: () => true }).plugins
 }
+
+test("doesn't warn about node_modules packages that aren't Adapt plugins", () => {
+  const root = makeRoot()
+  try {
+    writePackageJSON(path.join(root, 'node_modules/@babel/core'), { name: '@babel/core', version: '8.0.0' })
+    writePackageJSON(path.join(root, 'node_modules/string-width-cjs'), { name: 'string-width', version: '4.2.3' })
+    const warnings = []
+    assert.equal(loadPlugins(root, message => warnings.push(message)).length, 0)
+    assert.deepEqual(warnings, [])
+  } finally {
+    fs.removeSync(root)
+  }
+})
+
+test('matches a scoped plugin folder against its scoped package name', () => {
+  const root = makeRoot()
+  try {
+    writePackageJSON(path.join(root, 'node_modules/@scope/adapt-good'), {
+      name: '@scope/adapt-good',
+      version: '1.0.0',
+      keywords: ['adapt-plugin', 'adapt-extension']
+    })
+    writePackageJSON(path.join(root, 'node_modules/adapt-renamed'), {
+      name: 'adapt-original',
+      version: '1.0.0',
+      keywords: ['adapt-plugin', 'adapt-extension']
+    })
+    const warnings = []
+    loadPlugins(root, message => warnings.push(message))
+    assert.deepEqual(warnings, ['Plugin folder name adapt-renamed does not match package name adapt-original.'])
+  } finally {
+    fs.removeSync(root)
+  }
+})
 
 test('finds a plugin under node_modules with the adapt-plugin keyword', () => {
   const root = makeRoot()
