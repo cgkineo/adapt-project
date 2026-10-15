@@ -8,6 +8,9 @@
   "description": "Adapt Framework project helpers - plugins, schemas, data and translations",
   "main": "index.js",
   "type": "module",
+  "engines": {
+    "node": ">=20.19"
+  },
   "homepage": "https://github.com/cgkineo/adapt-project",
   "license": "GPL-3.0",
   "scripts": {
