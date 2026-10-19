@@ -140,3 +140,58 @@ test('finds a scoped package under node_modules/@scope/*', () => {
     fs.removeSync(root)
   }
 })
+
+test('useSourcePlugins: false ignores src/ plugins', () => {
+  const root = makeRoot()
+  try {
+    writePackageJSON(path.join(root, 'src/components/adapt-in-src'), {
+      name: 'adapt-in-src',
+      version: '1.0.0',
+      keywords: ['adapt-plugin', 'adapt-component']
+    })
+    writePackageJSON(path.join(root, 'node_modules/adapt-in-modules'), {
+      name: 'adapt-in-modules',
+      version: '1.0.0',
+      keywords: ['adapt-plugin', 'adapt-component']
+    })
+    const framework = new Framework({ rootPath: root, schemaVersion: '1.0.0', useSourcePlugins: false, log: noop, warn: noop })
+    assert.deepEqual(framework.getPlugins({ includedFilter: () => true }).pluginNames, ['adapt-in-modules'])
+    assert.deepEqual(loadPlugins(root).map(plugin => plugin.name).sort(), ['adapt-in-modules', 'adapt-in-src'])
+  } finally {
+    fs.removeSync(root)
+  }
+})
+
+test('a stub package.json without a type falls back to bower.json', () => {
+  const root = makeRoot()
+  try {
+    const dir = path.join(root, 'src/components/adapt-legacy')
+    writePackageJSON(dir, { name: 'adapt-legacy', devDependencies: { eslint: '*' } })
+    fs.writeJSONSync(path.join(dir, 'bower.json'), { name: 'adapt-legacy', version: '2.0.0', component: 'legacy' })
+    const plugins = loadPlugins(root)
+    assert.equal(plugins.length, 1)
+    assert.equal(plugins[0].version, '2.0.0')
+    assert.equal(plugins[0].type, 'component')
+    assert.equal(plugins[0].folderName, 'adapt-legacy')
+  } finally {
+    fs.removeSync(root)
+  }
+})
+
+test("doesn't warn that src/core is named adapt-contrib-core", () => {
+  const root = makeRoot()
+  try {
+    writePackageJSON(path.join(root, 'src/core'), {
+      name: 'adapt-contrib-core',
+      version: '6.0.0',
+      keywords: ['adapt-plugin', 'adapt-core']
+    })
+    const warnings = []
+    const plugins = loadPlugins(root, message => warnings.push(message))
+    assert.equal(plugins[0].type, 'core')
+    assert.equal(plugins[0].folderName, 'core')
+    assert.deepEqual(warnings, [])
+  } finally {
+    fs.removeSync(root)
+  }
+})
